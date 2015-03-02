@@ -137,52 +137,62 @@
     add: function($target) {
       var opts = this.opts();
       $target = opts.API.getTarget($target);
-      opts.API.addValue($target);
-      opts.API.trigger('st-add', [opts, opts.API, $target]);
+      var collection = opts.API.addValue($target);
+      opts.API.trigger('st-add', [opts, opts.API, collection]);
     },
     remove: function($target) {
       var opts = this.opts();
       $target = opts.API.getTarget($target);
-      opts.API.removeValue($target);
-      opts.API.trigger('st-remove', [opts, opts.API, $target]);
+      var collection = opts.API.removeValue($target);
+      opts.API.trigger('st-remove', [opts, opts.API, collection]);
     },
     addValue: function($item) {
       var opts = this.opts(),
+      collection = [],
       values = this._$el.val();
       values = values ? values.split(', ') : [];
       if (opts.forceRelationship == false) {
         addValue($item.data('st-val'), values);
         $item.addClass('st-added');
+        collection.push($item);
       }
       else {
         var $parents = $item.parentsUntil('.st-wrapper', '.st-item');
         $parents.each(function() {
           addValue($(this).data('st-val'), values);
           $(this).addClass('st-added');
+          collection.push($(this));
         });
         addValue($item.data('st-val'), values);
         $item.addClass('st-added');
+        collection.push($item);
       }
       this._$el.val(values.join(', '));
+      return collection;
     },
     removeValue: function($item) {
       var opts = this.opts(),
+      collection = [],
       values = this._$el.val();
       values = values ? values.split(', ') : [];
       if (opts.forceRelationship == false) {
         removeValue($item.data('st-val'), values); 
         $item.removeClass('st-added');
+        collection.push($item);
       }
       else {
-        var $children = $item.find('.st-item');
+        var $children = $item.find('.st-item.st-added');
         $children.each(function() {
           removeValue($(this).data('st-val'), values);
           $(this).removeClass('st-added');
+          collection.push($(this));
         });
         removeValue($item.data('st-val'), values); 
         $item.removeClass('st-added');
+        collection.push($item);
       }
       this._$el.val(values.join(', '));
+      return collection;
     }
   }
   
