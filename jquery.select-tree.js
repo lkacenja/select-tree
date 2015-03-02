@@ -51,7 +51,7 @@
       opts.elementLookup = opts.elementLookup || {};
       for (x in data) {
         var $item = opts.factory.item();
-        $item.find('.st-label').text(data[x].value); 
+        $item.find('.st-label').prepend(data[x].value); 
         $item.data('st-val', data[x].key);
         // Attach clicks
         function click(e) {
