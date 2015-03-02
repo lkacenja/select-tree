@@ -60,6 +60,7 @@
         $item.find('.st-control').click(click);
         opts.elementLookup[data[x].key] = $item;
         if (data[x].children) {
+          $item.addClass('st-parent');
           var $childList = opts.API.buildList(data[x].children, true);
           $item.append($childList);
         }
