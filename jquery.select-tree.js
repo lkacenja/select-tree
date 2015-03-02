@@ -50,9 +50,9 @@
       $parentList = opts.factory.list(); 
       opts.elementLookup = opts.elementLookup || {};
       for (x in data) {
-        var $item = opts.factory.item(),
-        $label = opts.factory.control().addClass('st-label').text(data[x].value); 
-        $item.data('st-val', data[x].key).prepend($label);
+        var $item = opts.factory.item();
+        $item.find('.st-label').text(data[x].value); 
+        $item.data('st-val', data[x].key);
         // Attach clicks
         function click(e) {
           opts.API.click.call(_this, e);
@@ -218,11 +218,13 @@
     },
     item: function() {
       var $pick = this.control(),
-        $close = this.control();
+        $close = this.control(),
+        $label = this.control();
       $pick.text('+').addClass('st-add');
       $close.text('x').addClass('st-remove'); 
+      $label.addClass('st-label');
       $item = $('<li/>');
-      $item.addClass('st-item').append($pick).append($close);
+      $item.addClass('st-item').append($label).append($pick).append($close);
       return $item;
     },
     control: function() {
