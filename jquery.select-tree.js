@@ -40,8 +40,15 @@
       // Kick of list recursion
       var $list = opts.API.buildList(opts.data); 
       $wrapper.append($list);
-      // Store selection count
-      opts.selectionCount = 0;
+      // Look for default values
+      var defaults = this._$el.val();
+      if (defaults) {
+        defaults = defaults.split(',');
+        for (var x in defaults) {
+          opts.API.add(defaults[x]);
+          opts.API.open(defaults[x]);
+        }
+      }
     },
     buildList: function(data, recurse) {
       var x,
@@ -81,16 +88,20 @@
       var opts = this.opts(),
       $item = opts.API.getItemByKey(key);
       if ($item && $item.length > 0) {
-        return $item.find('ul').first();
+        var $list = $item.find('ul').first();
+        if ($list.length > 0) {
+          return $list;
+        }
+        return $item;
       }
       return false;
     },
     getTarget: function($target) {
       var opts = this.opts();
       if (typeof $target == 'number' || typeof $target == 'string') {
-        $target = opts.API.getChildListByKey($target);
+        $target = opts.API.getItemByKey($target);
       }
-      if ($target.not('.st-item')) {
+      if ($target.is('.st-control')) {
         $target = $target.parents('.st-item').first();
       }
       return $target;
@@ -122,14 +133,15 @@
     },
     open: function($target) {
       var opts = this.opts();
-      if (typeof $target == 'number')
+      if (typeof $target == 'number' || typeof $target == 'string')
         $target = opts.API.getChildListByKey($target);
       $target.show(); 
+      $target.parentsUntil('st-wrapper', '.st-list').show();
       opts.API.trigger('st-open', [opts, opts.API, $target]);
     },
     close: function($target) {
       var opts = this.opts();
-      if (typeof $target == 'number')
+      if (typeof $target == 'number' || typeof $target == 'string')
         $target = opts.API.getChildListByKey($target);
       $target.hide();
       opts.API.trigger('st-close', [opts, opts.API, $target]);
@@ -150,7 +162,7 @@
       var opts = this.opts(),
       collection = [],
       values = this._$el.val();
-      values = values ? values.split(', ') : [];
+      values = values ? values.split(',') : [];
       if (opts.forceRelationship == false) {
         addValue($item.data('st-val'), values);
         $item.addClass('st-added');
@@ -167,14 +179,14 @@
         $item.addClass('st-added');
         collection.push($item);
       }
-      this._$el.val(values.join(', '));
+      this._$el.val(values.join(','));
       return collection;
     },
     removeValue: function($item) {
       var opts = this.opts(),
       collection = [],
       values = this._$el.val();
-      values = values ? values.split(', ') : [];
+      values = values ? values.split(',') : [];
       if (opts.forceRelationship == false) {
         removeValue($item.data('st-val'), values); 
         $item.removeClass('st-added');
@@ -191,7 +203,7 @@
         $item.removeClass('st-added');
         collection.push($item);
       }
-      this._$el.val(values.join(', '));
+      this._$el.val(values.join(','));
       return collection;
     }
   }
