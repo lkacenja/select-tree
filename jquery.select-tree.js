@@ -46,7 +46,9 @@
         defaults = defaults.split(',');
         for (var x in defaults) {
           opts.API.add(defaults[x]);
-          opts.API.open(defaults[x]);
+          var $item = opts.elementLookup[defaults[x]].parents('.st-item').first();
+          if ($item.length > 0)
+            opts.API.open($item.data('st-val'));
         }
       }
     },
